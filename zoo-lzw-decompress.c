@@ -75,6 +75,18 @@ static unsigned int masks[MAX_BITS + 1] = { 0,     0,     0,     0,     0,
 static unsigned int bit_offset;
 static unsigned int output_offset;
 
+static void wr_dchar(char ch)
+{
+    if (output_offset >= BUFFER_SIZE - SPARE) {  // if buffer full
+        if (write(STDOUT_FILENO, obuf, output_offset) != output_offset) {
+            die("Write error");
+        }
+        // addbfcrc(obuf, output_offset);  // update CRC
+        output_offset = 0;  // restore empty buffer
+    }
+    obuf[output_offset++] = ch;  // store character
+}
+
 static void clear_table(void)
 {
     nbits = 9;
@@ -182,18 +194,6 @@ loop:
     old_code = in_code;
 
     goto loop;
-}
-
-static void wr_dchar(char ch)
-{
-    if (output_offset >= BUFFER_SIZE - SPARE) {  // if buffer full
-        if (write(STDOUT_FILENO, obuf, output_offset) != output_offset) {
-            die("Write error");
-        }
-        // addbfcrc(obuf, output_offset);  // update CRC
-        output_offset = 0;  // restore empty buffer
-    }
-    obuf[output_offset++] = ch;  // store character
 }
 
 // adds a code to table

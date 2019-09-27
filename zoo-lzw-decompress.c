@@ -28,7 +28,7 @@
 
 struct tabentry {
     unsigned int next;
-    char z_ch;
+    char suffix_char;
 };
 
 static struct tabentry *table;
@@ -119,8 +119,8 @@ loop:
         push(fin_char);
     }
 
-    while (cur_code > 255) {              // if code, not character
-        push(table[cur_code].z_ch);       // push suffix char
+    while (cur_code > 255) {  // if code, not character
+        push(table[cur_code].suffix_char);
         cur_code = table[cur_code].next;  // <w> := <w>.code
     }
 
@@ -199,7 +199,7 @@ static void wr_dchar(char ch)
 // adds a code to table
 static void ad_dcode(void)
 {
-    table[next_free_code].z_ch = k;         // save suffix char
+    table[next_free_code].suffix_char = k;
     table[next_free_code].next = old_code;  // save prefix code
     next_free_code++;
     if (next_free_code >= max_code) {

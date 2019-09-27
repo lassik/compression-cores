@@ -33,10 +33,6 @@ struct tabentry {
 
 static struct tabentry *table;
 
-static unsigned int rd_dcode(void);
-static void wr_dchar(char ch);
-static void ad_dcode(void);
-
 static unsigned int lzd_sp;
 static unsigned int lzd_stack[MAX_STACK + SPARE];
 

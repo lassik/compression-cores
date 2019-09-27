@@ -102,6 +102,13 @@ static void stack_push(int ch)
 
 static unsigned int stack_pop(void) { return stack[--nstack]; }
 
+static unsigned int decode_uint16le(void *bytes_void)
+{
+    unsigned char *bytes = bytes_void;
+
+    return bytes[0] | (bytes[1] << 8);
+}
+
 // rd_dcode() reads a code from the input (compressed) file and returns its
 // value.
 static unsigned int rd_dcode(void)
@@ -134,13 +141,8 @@ static unsigned int rd_dcode(void)
         byte_offset = 0;
     }
     ptra = byte_offset + ibuf;
-    // NOTE:  "word = *((int *) ptra)" would not be independent of byte order.
-
-    word = (unsigned char)*ptra;
-    ptra++;
-    word = word | ((unsigned char)*ptra) << 8;
-    ptra++;
-
+    word = decode_uint16le(ptra);
+    ptra += 2;
     nextch = *ptra;
     if (ofs_inbyte) {
         // shift nextch right by ofs_inbyte bits

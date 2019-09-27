@@ -36,12 +36,6 @@ static struct table_entry *table;
 static unsigned int lzd_sp;
 static unsigned int lzd_stack[MAX_STACK + SPARE];
 
-static void die(const char *msg)
-{
-    fprintf(stderr, "%s\n", msg);
-    exit(1);
-}
-
 static char ibuf[BUFFER_SIZE];
 static char obuf[BUFFER_SIZE];
 
@@ -60,6 +54,12 @@ static unsigned int masks[MAX_BITS + 1] = { 0,     0,     0,     0,     0,
                                             0x3ff, 0x7ff, 0xfff, 0x1fff };
 static unsigned int bit_offset;
 static unsigned int output_offset;
+
+static void die(const char *msg)
+{
+    fprintf(stderr, "%s\n", msg);
+    exit(1);
+}
 
 static void wr_dchar(char ch)
 {

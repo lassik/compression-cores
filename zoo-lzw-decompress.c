@@ -56,7 +56,7 @@ static void push(int ch)
 
 #define pop() (lzd_stack[--lzd_sp])
 
-static char in_buf_adr[BUFFER_SIZE];
+static char ibuf[BUFFER_SIZE];
 static char out_buf_adr[BUFFER_SIZE];
 
 static unsigned int cur_code;
@@ -90,7 +90,7 @@ static void lzd(void)
     }
     clear_table();
 
-    if (read(STDIN_FILENO, in_buf_adr, BUFFER_SIZE - SPARE) == -1) {
+    if (read(STDIN_FILENO, ibuf, BUFFER_SIZE - SPARE) == -1) {
         die("Read error");
     }
 
@@ -155,8 +155,8 @@ static unsigned int rd_dcode(void)
 
         bit_offset = ofs_inbyte + nbits;
         space_left = BUFFER_SIZE - SPARE - byte_offset;
-        ptrb = byte_offset + in_buf_adr;  // point to char
-        ptra = in_buf_adr;
+        ptrb = byte_offset + ibuf;  // point to char
+        ptra = ibuf;
         // we now move the remaining characters down buffer beginning
         while (space_left > 0) {
             *ptra++ = *ptrb++;
@@ -167,7 +167,7 @@ static unsigned int rd_dcode(void)
         }
         byte_offset = 0;
     }
-    ptra = byte_offset + in_buf_adr;
+    ptra = byte_offset + ibuf;
     // NOTE:  "word = *((int *) ptra)" would not be independent of byte order.
 
     word = (unsigned char)*ptra;

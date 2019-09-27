@@ -35,7 +35,6 @@ struct tabentry {
 };
 
 static struct tabentry *table;
-static int gotmem = 0;
 
 static void init_dtab(void);
 static unsigned int rd_dcode(void);
@@ -88,12 +87,8 @@ static int lzd(void)
     bit_offset = 0;
     output_offset = 0;
 
-    if (gotmem == 0) {
-        table =
-        (struct tabentry *)malloc(MAXMAX * sizeof(struct tabentry) + SPARE);
-        gotmem++;
-    }
-    if (table == (struct tabentry *)0) {
+    table = calloc(1, MAXMAX * sizeof(struct tabentry) + SPARE);
+    if (!table) {
         die("Out of memory");
     }
 

@@ -26,12 +26,12 @@
 
 #define SPARE 5
 
-struct tabentry {
+struct table_entry {
     unsigned int next;
     char suffix_char;
 };
 
-static struct tabentry *table;
+static struct table_entry *table;
 
 static unsigned int lzd_sp;
 static unsigned int lzd_stack[MAX_STACK + SPARE];
@@ -155,7 +155,7 @@ static unsigned int rd_dcode(void)
 
 static void decompress(void)
 {
-    table = calloc(1, CODE_LIMIT * sizeof(struct tabentry) + SPARE);
+    table = calloc(1, CODE_LIMIT * sizeof(struct table_entry) + SPARE);
     if (!table) {
         die("Out of memory");
     }

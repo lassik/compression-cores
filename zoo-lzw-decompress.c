@@ -219,3 +219,9 @@ static void ad_dcode(void)
         }
     }
 }
+
+int main(void)
+{
+    lzd();
+    return 0;
+}

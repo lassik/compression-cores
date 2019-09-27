@@ -78,7 +78,7 @@ static unsigned int masks[] = { 0, 0, 0,     0,     0,     0,     0,
 static unsigned int bit_offset;
 static unsigned int output_offset;
 
-static int lzd(void)
+static void lzd(void)
 {
     nbits = 9;
     max_code = 512;
@@ -105,7 +105,7 @@ loop:
             }
             // addbfcrc(out_buf_adr, output_offset);
         }
-        return (0);
+        return;
     }
 
     if (cur_code == CLEAR) {

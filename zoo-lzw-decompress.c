@@ -24,8 +24,6 @@
 #define FIRST_FREE_CODE 258  // first free code
 #define CODE_LIMIT 8192
 
-#define SPARE 5
-
 struct table_entry {
     unsigned int next;
     char suffix_char;
@@ -34,10 +32,10 @@ struct table_entry {
 static struct table_entry *table;
 
 static unsigned int lzd_sp;
-static unsigned int lzd_stack[MAX_STACK + SPARE];
+static unsigned int lzd_stack[MAX_STACK];
 
-static char ibuf[BUFFER_SIZE + SPARE];
-static char obuf[BUFFER_SIZE + SPARE];
+static char ibuf[BUFFER_SIZE];
+static char obuf[BUFFER_SIZE];
 
 static unsigned int cur_code;
 static unsigned int old_code;
@@ -155,7 +153,7 @@ static unsigned int rd_dcode(void)
 
 static void decompress(void)
 {
-    table = calloc(1, CODE_LIMIT * sizeof(struct table_entry) + SPARE);
+    table = calloc(CODE_LIMIT, sizeof(struct table_entry));
     if (!table) {
         die("Out of memory");
     }

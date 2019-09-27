@@ -32,7 +32,7 @@ struct table_entry {
 
 static struct table_entry table[CODE_LIMIT];
 
-static unsigned int lzd_sp;
+static unsigned int nstack;
 static unsigned int stack[MAX_STACK];
 
 static char ibuf[BUFFER_SIZE];
@@ -94,13 +94,13 @@ static void table_add_code(void)
 
 static void push(int ch)
 {
-    stack[lzd_sp++] = ch;
-    if (lzd_sp >= MAX_STACK) {
+    stack[nstack++] = ch;
+    if (nstack >= MAX_STACK) {
         die("Stack overflow");
     }
 }
 
-static unsigned int pop(void) { return stack[--lzd_sp]; }
+static unsigned int pop(void) { return stack[--nstack]; }
 
 // rd_dcode() reads a code from the input (compressed) file and returns its
 // value.
@@ -191,7 +191,7 @@ loop:
 
     k = fin_char = cur_code;
     push(k);
-    while (lzd_sp) {
+    while (nstack) {
         wr_dchar(pop());
     }
     table_add_code();

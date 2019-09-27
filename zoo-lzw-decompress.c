@@ -2,8 +2,16 @@
 // language code. The contents of this file are hereby released to the
 // public domain. -- Rahul Dhesi 1986/11/14, 1987/02/08
 
-#include "func.h"
-#include "options.h"
+// Use buffer sizes of at least 1024, larger if enough memory is
+// available. Buffer sizes of over 8192 have not been confirmed to
+// work.
+#define IN_BUF_SIZE 1024
+#define OUT_BUF_SIZE 1024
+
+// Decompression stack. Except in pathological cases, 2000 bytes
+// should be enough. Rare files may need a bigger stack to decompress.
+// May be decreased to 1000 bytes if memory is tight.
+#define STACKSIZE 2000  // adjust to conserve memory
 
 #define INBUFSIZ (IN_BUF_SIZE - SPARE)
 #define OUTBUFSIZ (OUT_BUF_SIZE - SPARE)

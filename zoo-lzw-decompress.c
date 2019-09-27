@@ -21,8 +21,6 @@
 
 #define INBUFSIZ (IN_BUF_SIZE - SPARE)
 #define OUTBUFSIZ (OUT_BUF_SIZE - SPARE)
-#define MEMERR 2
-#define IOERR 1
 #define MAXBITS 13
 #define CLEAR 256       // clear code
 #define Z_EOF 257       // end of file marker

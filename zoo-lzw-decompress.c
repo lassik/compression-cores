@@ -135,7 +135,7 @@ loop:
     old_code = in_code;
 
     goto loop;
-}  // lzd()
+}
 
 // rd_dcode() reads a code from the input (compressed) file and returns its
 // value.
@@ -184,7 +184,7 @@ static unsigned int rd_dcode(void)
         (word >> ofs_inbyte) | (((unsigned)nextch) << (16 - ofs_inbyte));
     }
     return (word & masks[nbits]);
-}  // rd_dcode()
+}
 
 static void init_dtab(void)
 {
@@ -204,7 +204,7 @@ static void wr_dchar(char ch)
         output_offset = 0;  // restore empty buffer
     }
     out_buf_adr[output_offset++] = ch;  // store character
-}  // wr_dchar()
+}
 
 // adds a code to table
 static void ad_dcode(void)

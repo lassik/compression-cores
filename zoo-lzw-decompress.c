@@ -42,16 +42,6 @@ static void die(const char *msg)
     exit(1);
 }
 
-static void push(int ch)
-{
-    lzd_stack[lzd_sp++] = ch;
-    if (lzd_sp >= MAX_STACK) {
-        die("Stack overflow");
-    }
-}
-
-static unsigned int pop(void) { return lzd_stack[--lzd_sp]; }
-
 static char ibuf[BUFFER_SIZE];
 static char obuf[BUFFER_SIZE];
 
@@ -103,6 +93,16 @@ static void ad_dcode(void)
         }
     }
 }
+
+static void push(int ch)
+{
+    lzd_stack[lzd_sp++] = ch;
+    if (lzd_sp >= MAX_STACK) {
+        die("Stack overflow");
+    }
+}
+
+static unsigned int pop(void) { return lzd_stack[--lzd_sp]; }
 
 // rd_dcode() reads a code from the input (compressed) file and returns its
 // value.

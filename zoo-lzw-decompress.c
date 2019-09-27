@@ -41,7 +41,7 @@ static void ad_dcode(void);
 static unsigned int lzd_sp = 0;
 static unsigned int lzd_stack[STACKSIZE + SPARE];
 
-static int push(int ch)
+static void push(int ch)
 {
     lzd_stack[lzd_sp++] = ch;
     if (lzd_sp >= STACKSIZE)

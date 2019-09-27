@@ -60,8 +60,8 @@ static void push(int ch)
 
 #define pop() (lzd_stack[--lzd_sp])
 
-static char out_buf_adr[IN_BUF_SIZE + SPARE];
-static char in_buf_adr[OUT_BUF_SIZE + SPARE];
+static char in_buf_adr[IN_BUF_SIZE + SPARE];
+static char out_buf_adr[OUT_BUF_SIZE + SPARE];
 
 static unsigned int cur_code;
 static unsigned int old_code;

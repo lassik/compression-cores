@@ -18,7 +18,7 @@
 // May be decreased to 1000 bytes if memory is tight.
 #define MAX_STACK 2000  // adjust to conserve memory
 
-#define MAXBITS 13
+#define MAX_BITS 13
 #define CLEAR_CODE 256
 #define EOF_CODE 257
 #define FIRST_FREE_CODE 258  // first free code
@@ -204,7 +204,7 @@ static void ad_dcode(void)
     table[free_code].next = old_code;  // save prefix code
     free_code++;
     if (free_code >= max_code) {
-        if (nbits < MAXBITS) {
+        if (nbits < MAX_BITS) {
             nbits++;
             max_code = max_code << 1;  // double max_code
         }

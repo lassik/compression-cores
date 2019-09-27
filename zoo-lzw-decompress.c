@@ -63,7 +63,7 @@ static unsigned int cur_code;
 static unsigned int old_code;
 static unsigned int in_code;
 
-static unsigned int free_code;
+static unsigned int next_free_code;
 static int nbits;
 static unsigned int max_code;
 
@@ -79,7 +79,7 @@ static void clear_table(void)
 {
     nbits = 9;
     max_code = 512;
-    free_code = FIRST_FREE_CODE;
+    next_free_code = FIRST_FREE_CODE;
 }
 
 static void lzd(void)
@@ -114,8 +114,8 @@ loop:
     }
 
     in_code = cur_code;
-    if (cur_code >= free_code) {  // if code not in table (k<w>k<w>k)
-        cur_code = old_code;      // previous code becomes current
+    if (cur_code >= next_free_code) {  // if code not in table (k<w>k<w>k)
+        cur_code = old_code;           // previous code becomes current
         push(fin_char);
     }
 
@@ -199,10 +199,10 @@ static void wr_dchar(char ch)
 // adds a code to table
 static void ad_dcode(void)
 {
-    table[free_code].z_ch = k;         // save suffix char
-    table[free_code].next = old_code;  // save prefix code
-    free_code++;
-    if (free_code >= max_code) {
+    table[next_free_code].z_ch = k;         // save suffix char
+    table[next_free_code].next = old_code;  // save prefix code
+    next_free_code++;
+    if (next_free_code >= max_code) {
         if (nbits < MAX_BITS) {
             nbits++;
             max_code = max_code << 1;  // double max_code

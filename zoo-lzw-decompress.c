@@ -18,7 +18,7 @@
 #define SPARE 5
 
 struct tabentry {
-    unsigned next;
+    unsigned int next;
     char z_ch;
 };
 
@@ -26,12 +26,12 @@ struct tabentry *table;
 int gotmem = 0;
 
 int init_dtab();
-unsigned rd_dcode();
+unsigned int rd_dcode();
 int wr_dchar();
 int ad_dcode();
 
-unsigned lzd_sp = 0;
-unsigned lzd_stack[STACKSIZE + SPARE];
+unsigned int lzd_sp = 0;
+unsigned int lzd_stack[STACKSIZE + SPARE];
 
 int push(ch) int ch;
 {
@@ -47,20 +47,20 @@ char in_buf_adr[OUT_BUF_SIZE + SPARE];
 
 char memflag = 0;  // memory allocated? flag
 
-unsigned cur_code;
-unsigned old_code;
-unsigned in_code;
+unsigned int cur_code;
+unsigned int old_code;
+unsigned int in_code;
 
-unsigned free_code;
+unsigned int free_code;
 int nbits;
-unsigned max_code;
+unsigned int max_code;
 
 char fin_char;
 char k;
-unsigned masks[] = { 0, 0, 0,     0,     0,     0,     0,
-                     0, 0, 0x1ff, 0x3ff, 0x7ff, 0xfff, 0x1fff };
-unsigned bit_offset;
-unsigned output_offset;
+unsigned int masks[] = { 0, 0, 0,     0,     0,     0,     0,
+                         0, 0, 0x1ff, 0x3ff, 0x7ff, 0xfff, 0x1fff };
+unsigned int bit_offset;
+unsigned int output_offset;
 int in_han, out_han;
 
 int lzd(input_handle, output_handle) int input_handle,
@@ -134,13 +134,13 @@ loop:
 
 // rd_dcode() reads a code from the input (compressed) file and returns its
 // value.
-unsigned rd_dcode()
+unsigned int rd_dcode()
 {
     register char *ptra, *ptrb;  // miscellaneous pointers
-    unsigned word;               // first 16 bits in buffer
-    unsigned byte_offset;
-    char nextch;          // next 8 bits in buffer
-    unsigned ofs_inbyte;  // offset within byte
+    unsigned int word;           // first 16 bits in buffer
+    unsigned int byte_offset;
+    char nextch;              // next 8 bits in buffer
+    unsigned int ofs_inbyte;  // offset within byte
 
     ofs_inbyte = bit_offset % 8;
     byte_offset = bit_offset / 8;

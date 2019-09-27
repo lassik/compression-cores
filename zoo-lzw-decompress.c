@@ -78,12 +78,9 @@ static unsigned int masks[] = { 0, 0, 0,     0,     0,     0,     0,
                                 0, 0, 0x1ff, 0x3ff, 0x7ff, 0xfff, 0x1fff };
 static unsigned int bit_offset;
 static unsigned int output_offset;
-static int in_han, out_han;
 
-static int lzd(int input_handle, int output_handle)
+static int lzd(void)
 {
-    in_han = input_handle;    // make it avail to other fns
-    out_han = output_handle;  // ditto
     nbits = 9;
     max_code = 512;
     free_code = FIRST_FREE;
@@ -100,7 +97,7 @@ static int lzd(int input_handle, int output_handle)
         die("Out of memory");
     }
 
-    if (read(in_han, in_buf_adr, INBUFSIZ) == -1) {
+    if (read(STDIN_FILENO, in_buf_adr, INBUFSIZ) == -1) {
         die("Read error");
     }
 
@@ -110,11 +107,9 @@ loop:
     cur_code = rd_dcode();
     if (cur_code == Z_EOF) {
         if (output_offset != 0) {
-            if (out_han != -2) {
-                if (write(out_han, out_buf_adr, output_offset) !=
-                    output_offset) {
-                    die("Write error");
-                }
+            if (write(STDOUT_FILENO, out_buf_adr, output_offset) !=
+                output_offset) {
+                die("Write error");
             }
             // addbfcrc(out_buf_adr, output_offset);
         }
@@ -176,7 +171,7 @@ static unsigned int rd_dcode(void)
             *ptra++ = *ptrb++;
             space_left--;
         }
-        if (read(in_han, ptra, byte_offset) == -1) {
+        if (read(STDIN_FILENO, ptra, byte_offset) == -1) {
             die("Read error");
         }
         byte_offset = 0;
@@ -209,10 +204,9 @@ static void init_dtab(void)
 static void wr_dchar(char ch)
 {
     if (output_offset >= OUTBUFSIZ) {  // if buffer full
-        if (out_han != -2) {
-            if (write(out_han, out_buf_adr, output_offset) != output_offset) {
-                die("Write error");
-            }
+        if (write(STDOUT_FILENO, out_buf_adr, output_offset) !=
+            output_offset) {
+            die("Write error");
         }
         // addbfcrc(out_buf_adr, output_offset);  // update CRC
         output_offset = 0;  // restore empty buffer

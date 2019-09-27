@@ -94,6 +94,20 @@ static void clear_table(void)
     next_free_code = FIRST_FREE_CODE;
 }
 
+// adds a code to table
+static void ad_dcode(void)
+{
+    table[next_free_code].suffix_char = k;
+    table[next_free_code].next = old_code;  // save prefix code
+    next_free_code++;
+    if (next_free_code >= max_code) {
+        if (nbits < MAX_BITS) {
+            nbits++;
+            max_code *= 2;
+        }
+    }
+}
+
 // rd_dcode() reads a code from the input (compressed) file and returns its
 // value.
 static unsigned int rd_dcode(void)
@@ -194,20 +208,6 @@ loop:
     old_code = in_code;
 
     goto loop;
-}
-
-// adds a code to table
-static void ad_dcode(void)
-{
-    table[next_free_code].suffix_char = k;
-    table[next_free_code].next = old_code;  // save prefix code
-    next_free_code++;
-    if (next_free_code >= max_code) {
-        if (nbits < MAX_BITS) {
-            nbits++;
-            max_code *= 2;
-        }
-    }
 }
 
 int main(void)

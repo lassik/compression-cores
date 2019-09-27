@@ -11,16 +11,13 @@
 // Use buffer sizes of at least 1024, larger if enough memory is
 // available. Buffer sizes of over 8192 have not been confirmed to
 // work.
-#define IN_BUF_SIZE 1024
-#define OUT_BUF_SIZE 1024
+#define BUFFER_SIZE 1024
 
 // Decompression stack. Except in pathological cases, 2000 bytes
 // should be enough. Rare files may need a bigger stack to decompress.
 // May be decreased to 1000 bytes if memory is tight.
 #define STACKSIZE 2000  // adjust to conserve memory
 
-#define INBUFSIZ (IN_BUF_SIZE - SPARE)
-#define OUTBUFSIZ (OUT_BUF_SIZE - SPARE)
 #define MAXBITS 13
 #define CLEAR_CODE 256
 #define Z_EOF 257       // end of file marker
@@ -59,8 +56,8 @@ static void push(int ch)
 
 #define pop() (lzd_stack[--lzd_sp])
 
-static char in_buf_adr[IN_BUF_SIZE + SPARE];
-static char out_buf_adr[OUT_BUF_SIZE + SPARE];
+static char in_buf_adr[BUFFER_SIZE];
+static char out_buf_adr[BUFFER_SIZE];
 
 static unsigned int cur_code;
 static unsigned int old_code;
@@ -92,7 +89,7 @@ static void lzd(void)
     }
     clear_table();
 
-    if (read(STDIN_FILENO, in_buf_adr, INBUFSIZ) == -1) {
+    if (read(STDIN_FILENO, in_buf_adr, BUFFER_SIZE - SPARE) == -1) {
         die("Read error");
     }
 
@@ -152,11 +149,11 @@ static unsigned int rd_dcode(void)
     byte_offset = bit_offset / 8;
     bit_offset = bit_offset + nbits;
 
-    if (byte_offset >= INBUFSIZ - 5) {
+    if (byte_offset >= BUFFER_SIZE - SPARE) {
         int space_left;
 
         bit_offset = ofs_inbyte + nbits;
-        space_left = INBUFSIZ - byte_offset;
+        space_left = BUFFER_SIZE - SPARE - byte_offset;
         ptrb = byte_offset + in_buf_adr;  // point to char
         ptra = in_buf_adr;
         // we now move the remaining characters down buffer beginning
@@ -189,7 +186,7 @@ static unsigned int rd_dcode(void)
 
 static void wr_dchar(char ch)
 {
-    if (output_offset >= OUTBUFSIZ) {  // if buffer full
+    if (output_offset >= BUFFER_SIZE - SPARE) {  // if buffer full
         if (write(STDOUT_FILENO, out_buf_adr, output_offset) !=
             output_offset) {
             die("Write error");

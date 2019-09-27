@@ -23,7 +23,7 @@
 
 #define CLEAR_CODE 256
 #define EOF_CODE 257
-#define FIRST_FREE_CODE 258  // first free code
+#define FIRST_FREE_CODE 258
 
 struct table_entry {
     unsigned int next;
@@ -67,9 +67,9 @@ static void wr_dchar(char ch)
             die("Write error");
         }
         // addbfcrc(obuf, output_offset);  // update CRC
-        output_offset = 0;  // restore empty buffer
+        output_offset = 0;
     }
-    obuf[output_offset++] = ch;  // store character
+    obuf[output_offset++] = ch;
 }
 
 static void clear_table(void)

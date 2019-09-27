@@ -69,8 +69,9 @@ static unsigned int max_code;
 
 static char fin_char;
 static char k;
-static unsigned int masks[] = { 0, 0, 0,     0,     0,     0,     0,
-                                0, 0, 0x1ff, 0x3ff, 0x7ff, 0xfff, 0x1fff };
+static unsigned int masks[MAX_BITS + 1] = { 0,     0,     0,     0,     0,
+                                            0,     0,     0,     0,     0x1ff,
+                                            0x3ff, 0x7ff, 0xfff, 0x1fff };
 static unsigned int bit_offset;
 static unsigned int output_offset;
 

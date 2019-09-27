@@ -205,7 +205,7 @@ static void ad_dcode(void)
     if (next_free_code >= max_code) {
         if (nbits < MAX_BITS) {
             nbits++;
-            max_code = max_code << 1;  // double max_code
+            max_code *= 2;
         }
     }
 }

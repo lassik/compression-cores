@@ -21,8 +21,8 @@
 #define MAXBITS 13
 #define CLEAR_CODE 256
 #define EOF_CODE 257
-#define FIRST_FREE 258  // first free code
-#define MAXMAX 8192     // max code + 1
+#define FIRST_FREE_CODE 258  // first free code
+#define MAXMAX 8192          // max code + 1
 
 #define SPARE 5
 
@@ -78,7 +78,7 @@ static void clear_table(void)
 {
     nbits = 9;
     max_code = 512;
-    free_code = FIRST_FREE;
+    free_code = FIRST_FREE_CODE;
 }
 
 static void lzd(void)

@@ -16,7 +16,7 @@
 // Decompression stack. Except in pathological cases, 2000 bytes
 // should be enough. Rare files may need a bigger stack to decompress.
 // May be decreased to 1000 bytes if memory is tight.
-#define STACKSIZE 2000  // adjust to conserve memory
+#define MAX_STACK 2000  // adjust to conserve memory
 
 #define MAXBITS 13
 #define CLEAR_CODE 256
@@ -38,7 +38,7 @@ static void wr_dchar(char ch);
 static void ad_dcode(void);
 
 static unsigned int lzd_sp;
-static unsigned int lzd_stack[STACKSIZE + SPARE];
+static unsigned int lzd_stack[MAX_STACK + SPARE];
 
 static void die(const char *msg)
 {
@@ -49,7 +49,7 @@ static void die(const char *msg)
 static void push(int ch)
 {
     lzd_stack[lzd_sp++] = ch;
-    if (lzd_sp >= STACKSIZE) {
+    if (lzd_sp >= MAX_STACK) {
         die("Stack overflow");
     }
 }

@@ -20,7 +20,7 @@
 
 #define MAXBITS 13
 #define CLEAR_CODE 256
-#define Z_EOF 257       // end of file marker
+#define EOF_CODE 257
 #define FIRST_FREE 258  // first free code
 #define MAXMAX 8192     // max code + 1
 
@@ -95,7 +95,7 @@ static void lzd(void)
 
 loop:
     cur_code = rd_dcode();
-    if (cur_code == Z_EOF) {
+    if (cur_code == EOF_CODE) {
         if (output_offset) {
             if (write(STDOUT_FILENO, out_buf_adr, output_offset) !=
                 output_offset) {

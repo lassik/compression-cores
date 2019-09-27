@@ -92,7 +92,7 @@ static void table_add_code(void)
     }
 }
 
-static void push(int ch)
+static void stack_push(int ch)
 {
     stack[nstack++] = ch;
     if (nstack >= MAX_STACK) {
@@ -181,16 +181,16 @@ loop:
     in_code = cur_code;
     if (cur_code >= next_free_code) {  // if code not in table (k<w>k<w>k)
         cur_code = old_code;           // previous code becomes current
-        push(fin_char);
+        stack_push(fin_char);
     }
 
     while (cur_code > 255) {  // if code, not character
-        push(table[cur_code].suffix_char);
+        stack_push(table[cur_code].suffix_char);
         cur_code = table[cur_code].next;  // <w> := <w>.code
     }
 
     k = fin_char = cur_code;
-    push(k);
+    stack_push(k);
     while (nstack) {
         wr_dchar(pop());
     }

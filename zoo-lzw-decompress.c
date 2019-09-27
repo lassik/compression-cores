@@ -57,7 +57,7 @@ static void push(int ch)
 #define pop() (lzd_stack[--lzd_sp])
 
 static char ibuf[BUFFER_SIZE];
-static char out_buf_adr[BUFFER_SIZE];
+static char obuf[BUFFER_SIZE];
 
 static unsigned int cur_code;
 static unsigned int old_code;
@@ -98,11 +98,10 @@ loop:
     cur_code = rd_dcode();
     if (cur_code == EOF_CODE) {
         if (output_offset) {
-            if (write(STDOUT_FILENO, out_buf_adr, output_offset) !=
-                output_offset) {
+            if (write(STDOUT_FILENO, obuf, output_offset) != output_offset) {
                 die("Write error");
             }
-            // addbfcrc(out_buf_adr, output_offset);
+            // addbfcrc(obuf, output_offset);
         }
         return;
     }
@@ -188,14 +187,13 @@ static unsigned int rd_dcode(void)
 static void wr_dchar(char ch)
 {
     if (output_offset >= BUFFER_SIZE - SPARE) {  // if buffer full
-        if (write(STDOUT_FILENO, out_buf_adr, output_offset) !=
-            output_offset) {
+        if (write(STDOUT_FILENO, obuf, output_offset) != output_offset) {
             die("Write error");
         }
-        // addbfcrc(out_buf_adr, output_offset);  // update CRC
+        // addbfcrc(obuf, output_offset);  // update CRC
         output_offset = 0;  // restore empty buffer
     }
-    out_buf_adr[output_offset++] = ch;  // store character
+    obuf[output_offset++] = ch;  // store character
 }
 
 // adds a code to table

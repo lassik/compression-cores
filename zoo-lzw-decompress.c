@@ -79,8 +79,7 @@ static void clear_table(void)
     next_free_code = FIRST_FREE_CODE;
 }
 
-// adds a code to table
-static void ad_dcode(void)
+static void table_add_code(void)
 {
     table[next_free_code].suffix_char = k;
     table[next_free_code].next = old_code;  // save prefix code
@@ -195,7 +194,7 @@ loop:
     while (lzd_sp) {
         wr_dchar(pop());
     }
-    ad_dcode();
+    table_add_code();
     old_code = in_code;
 
     goto loop;

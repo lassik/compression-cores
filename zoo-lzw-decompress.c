@@ -66,8 +66,6 @@ static void push(int ch)
 static char out_buf_adr[IN_BUF_SIZE + SPARE];
 static char in_buf_adr[OUT_BUF_SIZE + SPARE];
 
-static char memflag = 0;  // memory allocated? flag
-
 static unsigned int cur_code;
 static unsigned int old_code;
 static unsigned int in_code;

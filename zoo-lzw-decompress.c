@@ -30,7 +30,7 @@ struct table_entry {
     char suffix_char;
 };
 
-static struct table_entry *table;
+static struct table_entry table[CODE_LIMIT];
 
 static unsigned int lzd_sp;
 static unsigned int lzd_stack[MAX_STACK];
@@ -154,10 +154,6 @@ static unsigned int rd_dcode(void)
 
 static void decompress(void)
 {
-    table = calloc(CODE_LIMIT, sizeof(struct table_entry));
-    if (!table) {
-        die("Out of memory");
-    }
     clear_table();
 
     if (read(STDIN_FILENO, ibuf, BUFFER_SIZE) == -1) {

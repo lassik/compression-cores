@@ -18,11 +18,12 @@
 // May be decreased to 1000 bytes if memory is tight.
 #define MAX_STACK 2000  // adjust to conserve memory
 
-#define MAX_BITS 13
+#define CODE_BITS 13
+#define CODE_LIMIT 8192
+
 #define CLEAR_CODE 256
 #define EOF_CODE 257
 #define FIRST_FREE_CODE 258  // first free code
-#define CODE_LIMIT 8192
 
 struct table_entry {
     unsigned int next;
@@ -47,9 +48,9 @@ static unsigned int max_code;
 
 static char fin_char;
 static char k;
-static unsigned int masks[MAX_BITS + 1] = { 0,     0,     0,     0,     0,
-                                            0,     0,     0,     0,     0x1ff,
-                                            0x3ff, 0x7ff, 0xfff, 0x1fff };
+static unsigned int masks[CODE_BITS + 1] = {
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0x1ff, 0x3ff, 0x7ff, 0xfff, 0x1fff
+};
 static unsigned int bit_offset;
 static unsigned int output_offset;
 
@@ -85,7 +86,7 @@ static void ad_dcode(void)
     table[next_free_code].next = old_code;  // save prefix code
     next_free_code++;
     if (next_free_code >= max_code) {
-        if (nbits < MAX_BITS) {
+        if (nbits < CODE_BITS) {
             nbits++;
             max_code *= 2;
         }

@@ -22,7 +22,7 @@
 #define CLEAR_CODE 256
 #define EOF_CODE 257
 #define FIRST_FREE_CODE 258  // first free code
-#define MAXMAX 8192          // max code + 1
+#define CODE_LIMIT 8192
 
 #define SPARE 5
 
@@ -83,7 +83,7 @@ static void clear_table(void)
 
 static void lzd(void)
 {
-    table = calloc(1, MAXMAX * sizeof(struct tabentry) + SPARE);
+    table = calloc(1, CODE_LIMIT * sizeof(struct tabentry) + SPARE);
     if (!table) {
         die("Out of memory");
     }

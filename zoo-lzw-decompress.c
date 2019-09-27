@@ -82,7 +82,7 @@ static void clear_table(void)
     next_free_code = FIRST_FREE_CODE;
 }
 
-static void lzd(void)
+static void decompress(void)
 {
     table = calloc(1, CODE_LIMIT * sizeof(struct tabentry) + SPARE);
     if (!table) {
@@ -212,6 +212,6 @@ static void ad_dcode(void)
 
 int main(void)
 {
-    lzd();
+    decompress();
     return 0;
 }

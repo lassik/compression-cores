@@ -50,7 +50,7 @@ static void push(int ch)
     }
 }
 
-#define pop() (lzd_stack[--lzd_sp])
+static unsigned int pop(void) { return lzd_stack[--lzd_sp]; }
 
 static char ibuf[BUFFER_SIZE];
 static char obuf[BUFFER_SIZE];

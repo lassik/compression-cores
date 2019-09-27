@@ -72,7 +72,7 @@ static void wr_dchar(char ch)
     obuf[output_offset++] = ch;
 }
 
-static void clear_table(void)
+static void table_clear(void)
 {
     nbits = 9;
     max_code = 512;
@@ -153,7 +153,7 @@ static unsigned int rd_dcode(void)
 
 static void decompress(void)
 {
-    clear_table();
+    table_clear();
 
     if (read(STDIN_FILENO, ibuf, BUFFER_SIZE) == -1) {
         die("Read error");
@@ -172,7 +172,7 @@ loop:
     }
 
     if (cur_code == CLEAR_CODE) {
-        clear_table();
+        table_clear();
         fin_char = k = old_code = cur_code = rd_dcode();
         wr_dchar(k);
         goto loop;

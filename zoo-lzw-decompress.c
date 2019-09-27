@@ -22,7 +22,7 @@
 #define INBUFSIZ (IN_BUF_SIZE - SPARE)
 #define OUTBUFSIZ (OUT_BUF_SIZE - SPARE)
 #define MAXBITS 13
-#define CLEAR 256       // clear code
+#define CLEAR_CODE 256
 #define Z_EOF 257       // end of file marker
 #define FIRST_FREE 258  // first free code
 #define MAXMAX 8192     // max code + 1
@@ -36,7 +36,6 @@ struct tabentry {
 
 static struct tabentry *table;
 
-static void init_dtab(void);
 static unsigned int rd_dcode(void);
 static void wr_dchar(char ch);
 static void ad_dcode(void);
@@ -78,22 +77,24 @@ static unsigned int masks[] = { 0, 0, 0,     0,     0,     0,     0,
 static unsigned int bit_offset;
 static unsigned int output_offset;
 
-static void lzd(void)
+static void clear_table(void)
 {
     nbits = 9;
     max_code = 512;
     free_code = FIRST_FREE;
+}
 
+static void lzd(void)
+{
     table = calloc(1, MAXMAX * sizeof(struct tabentry) + SPARE);
     if (!table) {
         die("Out of memory");
     }
+    clear_table();
 
     if (read(STDIN_FILENO, in_buf_adr, INBUFSIZ) == -1) {
         die("Read error");
     }
-
-    init_dtab();  // initialize table
 
 loop:
     cur_code = rd_dcode();
@@ -108,8 +109,8 @@ loop:
         return;
     }
 
-    if (cur_code == CLEAR) {
-        init_dtab();
+    if (cur_code == CLEAR_CODE) {
+        clear_table();
         fin_char = k = old_code = cur_code = rd_dcode();
         wr_dchar(k);
         goto loop;
@@ -184,13 +185,6 @@ static unsigned int rd_dcode(void)
         (word >> ofs_inbyte) | (((unsigned)nextch) << (16 - ofs_inbyte));
     }
     return (word & masks[nbits]);
-}
-
-static void init_dtab(void)
-{
-    nbits = 9;
-    max_code = 512;
-    free_code = FIRST_FREE;
 }
 
 static void wr_dchar(char ch)

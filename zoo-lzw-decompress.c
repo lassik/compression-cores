@@ -2,6 +2,12 @@
 // language code. The contents of this file are hereby released to the
 // public domain. -- Rahul Dhesi 1986/11/14, 1987/02/08
 
+#include <sys/types.h>
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
 // Use buffer sizes of at least 1024, larger if enough memory is
 // available. Buffer sizes of over 8192 have not been confirmed to
 // work.
@@ -41,11 +47,18 @@ static void ad_dcode(void);
 static unsigned int lzd_sp = 0;
 static unsigned int lzd_stack[STACKSIZE + SPARE];
 
+static void die(const char *msg)
+{
+    fprintf(stderr, "%s\n", msg);
+    exit(1);
+}
+
 static void push(int ch)
 {
     lzd_stack[lzd_sp++] = ch;
-    if (lzd_sp >= STACKSIZE)
-        prterror('f', "Stack overflow in lzd()\n", (char *)0, (char *)0);
+    if (lzd_sp >= STACKSIZE) {
+        die("Stack overflow");
+    }
 }
 
 #define pop() (lzd_stack[--lzd_sp])
@@ -87,11 +100,13 @@ static int lzd(int input_handle, int output_handle)
         (struct tabentry *)malloc(MAXMAX * sizeof(struct tabentry) + SPARE);
         gotmem++;
     }
-    if (table == (struct tabentry *)0)
-        memerr();
+    if (table == (struct tabentry *)0) {
+        die("Out of memory");
+    }
 
-    if (read(in_han, in_buf_adr, INBUFSIZ) == -1)
-        return (IOERR);
+    if (read(in_han, in_buf_adr, INBUFSIZ) == -1) {
+        die("Read error");
+    }
 
     init_dtab();  // initialize table
 
@@ -101,9 +116,9 @@ loop:
         if (output_offset != 0) {
             if (out_han != -2) {
                 if (write(out_han, out_buf_adr, output_offset) !=
-                    output_offset)
-                    prterror('f', "Output error in lzd()\n", (char *)0,
-                             (char *)0);
+                    output_offset) {
+                    die("Write error");
+                }
             }
             addbfcrc(out_buf_adr, output_offset);
         }
@@ -165,9 +180,9 @@ static unsigned int rd_dcode(void)
             *ptra++ = *ptrb++;
             space_left--;
         }
-        if (read(in_han, ptra, byte_offset) == -1)
-            prterror('f', "I/O error in lzd:rd_dcode\n", (char *)0,
-                     (char *)0);
+        if (read(in_han, ptra, byte_offset) == -1) {
+            die("Read error");
+        }
         byte_offset = 0;
     }
     ptra = byte_offset + in_buf_adr;
@@ -199,9 +214,9 @@ static void wr_dchar(char ch)
 {
     if (output_offset >= OUTBUFSIZ) {  // if buffer full
         if (out_han != -2) {
-            if (write(out_han, out_buf_adr, output_offset) != output_offset)
-                prterror('f', "Write error in lzd:wr_dchar\n", (char *)0,
-                         (char *)0);
+            if (write(out_han, out_buf_adr, output_offset) != output_offset) {
+                die("Write error");
+            }
         }
         addbfcrc(out_buf_adr, output_offset);  // update CRC
         output_offset = 0;                     // restore empty buffer

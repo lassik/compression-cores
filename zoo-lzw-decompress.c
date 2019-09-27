@@ -60,7 +60,7 @@ static void die(const char *msg)
     exit(1);
 }
 
-static void wr_dchar(char ch)
+static void write_decompressed_byte(char ch)
 {
     if (output_offset >= BUFFER_SIZE) {
         if (write(STDOUT_FILENO, obuf, output_offset) != output_offset) {
@@ -176,7 +176,7 @@ loop:
     if (cur_code == CLEAR_CODE) {
         table_clear();
         fin_char = k = old_code = cur_code = rd_dcode();
-        wr_dchar(k);
+        write_decompressed_byte(k);
         goto loop;
     }
 
@@ -194,7 +194,7 @@ loop:
     k = fin_char = cur_code;
     stack_push(k);
     while (nstack) {
-        wr_dchar(stack_pop());
+        write_decompressed_byte(stack_pop());
     }
     table_add_code();
     old_code = in_code;

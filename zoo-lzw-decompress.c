@@ -82,6 +82,55 @@ static void clear_table(void)
     next_free_code = FIRST_FREE_CODE;
 }
 
+// rd_dcode() reads a code from the input (compressed) file and returns its
+// value.
+static unsigned int rd_dcode(void)
+{
+    register char *ptra, *ptrb;  // miscellaneous pointers
+    unsigned int word;           // first 16 bits in buffer
+    unsigned int byte_offset;
+    char nextch;              // next 8 bits in buffer
+    unsigned int ofs_inbyte;  // offset within byte
+
+    ofs_inbyte = bit_offset % 8;
+    byte_offset = bit_offset / 8;
+    bit_offset = bit_offset + nbits;
+
+    if (byte_offset >= BUFFER_SIZE - SPARE) {
+        int space_left;
+
+        bit_offset = ofs_inbyte + nbits;
+        space_left = BUFFER_SIZE - SPARE - byte_offset;
+        ptrb = byte_offset + ibuf;  // point to char
+        ptra = ibuf;
+        // we now move the remaining characters down buffer beginning
+        while (space_left > 0) {
+            *ptra++ = *ptrb++;
+            space_left--;
+        }
+        if (read(STDIN_FILENO, ptra, byte_offset) == -1) {
+            die("Read error");
+        }
+        byte_offset = 0;
+    }
+    ptra = byte_offset + ibuf;
+    // NOTE:  "word = *((int *) ptra)" would not be independent of byte order.
+
+    word = (unsigned char)*ptra;
+    ptra++;
+    word = word | ((unsigned char)*ptra) << 8;
+    ptra++;
+
+    nextch = *ptra;
+    if (ofs_inbyte) {
+        // shift nextch right by ofs_inbyte bits
+        // and shift those bits right into word;
+        word =
+        (word >> ofs_inbyte) | (((unsigned)nextch) << (16 - ofs_inbyte));
+    }
+    return (word & masks[nbits]);
+}
+
 static void decompress(void)
 {
     table = calloc(1, CODE_LIMIT * sizeof(struct tabentry) + SPARE);
@@ -133,55 +182,6 @@ loop:
     old_code = in_code;
 
     goto loop;
-}
-
-// rd_dcode() reads a code from the input (compressed) file and returns its
-// value.
-static unsigned int rd_dcode(void)
-{
-    register char *ptra, *ptrb;  // miscellaneous pointers
-    unsigned int word;           // first 16 bits in buffer
-    unsigned int byte_offset;
-    char nextch;              // next 8 bits in buffer
-    unsigned int ofs_inbyte;  // offset within byte
-
-    ofs_inbyte = bit_offset % 8;
-    byte_offset = bit_offset / 8;
-    bit_offset = bit_offset + nbits;
-
-    if (byte_offset >= BUFFER_SIZE - SPARE) {
-        int space_left;
-
-        bit_offset = ofs_inbyte + nbits;
-        space_left = BUFFER_SIZE - SPARE - byte_offset;
-        ptrb = byte_offset + ibuf;  // point to char
-        ptra = ibuf;
-        // we now move the remaining characters down buffer beginning
-        while (space_left > 0) {
-            *ptra++ = *ptrb++;
-            space_left--;
-        }
-        if (read(STDIN_FILENO, ptra, byte_offset) == -1) {
-            die("Read error");
-        }
-        byte_offset = 0;
-    }
-    ptra = byte_offset + ibuf;
-    // NOTE:  "word = *((int *) ptra)" would not be independent of byte order.
-
-    word = (unsigned char)*ptra;
-    ptra++;
-    word = word | ((unsigned char)*ptra) << 8;
-    ptra++;
-
-    nextch = *ptra;
-    if (ofs_inbyte) {
-        // shift nextch right by ofs_inbyte bits
-        // and shift those bits right into word;
-        word =
-        (word >> ofs_inbyte) | (((unsigned)nextch) << (16 - ofs_inbyte));
-    }
-    return (word & masks[nbits]);
 }
 
 static void wr_dchar(char ch)

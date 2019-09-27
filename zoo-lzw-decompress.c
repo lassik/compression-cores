@@ -42,7 +42,7 @@ int ch;
    if (lzd_sp >= STACKSIZE)
       prterror ('f', "Stack overflow in lzd()\n", (char *) 0, (char *) 0);
 }
-   
+
 #define  pop()    (lzd_stack[--lzd_sp])
 
 char out_buf_adr[IN_BUF_SIZE + SPARE];
@@ -64,7 +64,7 @@ unsigned masks[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0,
                         0x1ff, 0x3ff, 0x7ff, 0xfff, 0x1fff };
 unsigned bit_offset;
 unsigned output_offset;
-int in_han, out_han; 
+int in_han, out_han;
 
 int lzd(input_handle, output_handle)
 int input_handle, output_handle;          /* input & output file handles */
@@ -79,7 +79,7 @@ int input_handle, output_handle;          /* input & output file handles */
    output_offset = 0;
 
    if (gotmem == 0) {
-      table = (struct tabentry *) 
+      table = (struct tabentry *)
          malloc (MAXMAX * sizeof (struct tabentry) + SPARE);
       gotmem++;
    }
@@ -97,8 +97,8 @@ loop:
       if (output_offset != 0) {
          if (out_han != -2) {
             if (write(out_han, out_buf_adr, output_offset) != output_offset)
-               prterror ('f', "Output error in lzd()\n", 
-						(char *) 0, (char *) 0);
+               prterror ('f', "Output error in lzd()\n",
+                                                (char *) 0, (char *) 0);
          }
          addbfcrc(out_buf_adr, output_offset);
       }
@@ -161,8 +161,8 @@ unsigned rd_dcode()
          space_left--;
       }
       if (read(in_han, ptra, byte_offset) == -1)
-         prterror ('f', "I/O error in lzd:rd_dcode\n", 
-				(char *) 0, (char *) 0);
+         prterror ('f', "I/O error in lzd:rd_dcode\n",
+                                (char *) 0, (char *) 0);
       byte_offset = 0;
    }
    ptra = byte_offset + in_buf_adr;
@@ -176,7 +176,7 @@ unsigned rd_dcode()
       /* and shift those bits right into word; */
       word = (word >> ofs_inbyte) | (((unsigned)nextch) << (16-ofs_inbyte));
    }
-   return (word & masks[nbits]); 
+   return (word & masks[nbits]);
 } /* rd_dcode() */
 
 int init_dtab()
@@ -192,8 +192,8 @@ char ch;
    if (output_offset >= OUTBUFSIZ) {      /* if buffer full */
       if (out_han != -2) {
          if (write(out_han, out_buf_adr, output_offset) != output_offset)
-            prterror ('f', "Write error in lzd:wr_dchar\n", 
-					(char *) 0, (char *) 0);
+            prterror ('f', "Write error in lzd:wr_dchar\n",
+                                        (char *) 0, (char *) 0);
       }
       addbfcrc(out_buf_adr, output_offset);     /* update CRC */
       output_offset = 0;                  /* restore empty buffer */

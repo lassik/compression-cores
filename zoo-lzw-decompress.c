@@ -118,7 +118,7 @@ loop:
                     die("Write error");
                 }
             }
-            addbfcrc(out_buf_adr, output_offset);
+            // addbfcrc(out_buf_adr, output_offset);
         }
         return (0);
     }
@@ -216,8 +216,8 @@ static void wr_dchar(char ch)
                 die("Write error");
             }
         }
-        addbfcrc(out_buf_adr, output_offset);  // update CRC
-        output_offset = 0;                     // restore empty buffer
+        // addbfcrc(out_buf_adr, output_offset);  // update CRC
+        output_offset = 0;  // restore empty buffer
     }
     out_buf_adr[output_offset++] = ch;  // store character
 }  // wr_dchar()

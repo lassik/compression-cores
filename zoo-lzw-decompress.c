@@ -22,18 +22,18 @@ struct tabentry {
     char z_ch;
 };
 
-struct tabentry *table;
-int gotmem = 0;
+static struct tabentry *table;
+static int gotmem = 0;
 
-void init_dtab(void);
-unsigned int rd_dcode(void);
-void wr_dchar(char ch);
-void ad_dcode(void);
+static void init_dtab(void);
+static unsigned int rd_dcode(void);
+static void wr_dchar(char ch);
+static void ad_dcode(void);
 
-unsigned int lzd_sp = 0;
-unsigned int lzd_stack[STACKSIZE + SPARE];
+static unsigned int lzd_sp = 0;
+static unsigned int lzd_stack[STACKSIZE + SPARE];
 
-int push(int ch)
+static int push(int ch)
 {
     lzd_stack[lzd_sp++] = ch;
     if (lzd_sp >= STACKSIZE)
@@ -42,28 +42,28 @@ int push(int ch)
 
 #define pop() (lzd_stack[--lzd_sp])
 
-char out_buf_adr[IN_BUF_SIZE + SPARE];
-char in_buf_adr[OUT_BUF_SIZE + SPARE];
+static char out_buf_adr[IN_BUF_SIZE + SPARE];
+static char in_buf_adr[OUT_BUF_SIZE + SPARE];
 
-char memflag = 0;  // memory allocated? flag
+static char memflag = 0;  // memory allocated? flag
 
-unsigned int cur_code;
-unsigned int old_code;
-unsigned int in_code;
+static unsigned int cur_code;
+static unsigned int old_code;
+static unsigned int in_code;
 
-unsigned int free_code;
-int nbits;
-unsigned int max_code;
+static unsigned int free_code;
+static int nbits;
+static unsigned int max_code;
 
-char fin_char;
-char k;
-unsigned int masks[] = { 0, 0, 0,     0,     0,     0,     0,
-                         0, 0, 0x1ff, 0x3ff, 0x7ff, 0xfff, 0x1fff };
-unsigned int bit_offset;
-unsigned int output_offset;
-int in_han, out_han;
+static char fin_char;
+static char k;
+static unsigned int masks[] = { 0, 0, 0,     0,     0,     0,     0,
+                                0, 0, 0x1ff, 0x3ff, 0x7ff, 0xfff, 0x1fff };
+static unsigned int bit_offset;
+static unsigned int output_offset;
+static int in_han, out_han;
 
-int lzd(int input_handle, int output_handle)
+static int lzd(int input_handle, int output_handle)
 {
     in_han = input_handle;    // make it avail to other fns
     out_han = output_handle;  // ditto
@@ -133,7 +133,7 @@ loop:
 
 // rd_dcode() reads a code from the input (compressed) file and returns its
 // value.
-unsigned int rd_dcode(void)
+static unsigned int rd_dcode(void)
 {
     register char *ptra, *ptrb;  // miscellaneous pointers
     unsigned int word;           // first 16 bits in buffer
@@ -180,14 +180,14 @@ unsigned int rd_dcode(void)
     return (word & masks[nbits]);
 }  // rd_dcode()
 
-void init_dtab(void)
+static void init_dtab(void)
 {
     nbits = 9;
     max_code = 512;
     free_code = FIRST_FREE;
 }
 
-void wr_dchar(char ch)
+static void wr_dchar(char ch)
 {
     if (output_offset >= OUTBUFSIZ) {  // if buffer full
         if (out_han != -2) {
@@ -202,7 +202,7 @@ void wr_dchar(char ch)
 }  // wr_dchar()
 
 // adds a code to table
-void ad_dcode(void)
+static void ad_dcode(void)
 {
     table[free_code].z_ch = k;         // save suffix char
     table[free_code].next = old_code;  // save prefix code

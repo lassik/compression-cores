@@ -36,8 +36,8 @@ static struct table_entry *table;
 static unsigned int lzd_sp;
 static unsigned int lzd_stack[MAX_STACK + SPARE];
 
-static char ibuf[BUFFER_SIZE];
-static char obuf[BUFFER_SIZE];
+static char ibuf[BUFFER_SIZE + SPARE];
+static char obuf[BUFFER_SIZE + SPARE];
 
 static unsigned int cur_code;
 static unsigned int old_code;
@@ -63,7 +63,7 @@ static void die(const char *msg)
 
 static void wr_dchar(char ch)
 {
-    if (output_offset >= BUFFER_SIZE - SPARE) {  // if buffer full
+    if (output_offset >= BUFFER_SIZE) {
         if (write(STDOUT_FILENO, obuf, output_offset) != output_offset) {
             die("Write error");
         }
@@ -118,11 +118,11 @@ static unsigned int rd_dcode(void)
     byte_offset = bit_offset / 8;
     bit_offset = bit_offset + nbits;
 
-    if (byte_offset >= BUFFER_SIZE - SPARE) {
+    if (byte_offset >= BUFFER_SIZE) {
         int space_left;
 
         bit_offset = ofs_inbyte + nbits;
-        space_left = BUFFER_SIZE - SPARE - byte_offset;
+        space_left = BUFFER_SIZE - byte_offset;
         ptrb = byte_offset + ibuf;  // point to char
         ptra = ibuf;
         // we now move the remaining characters down buffer beginning
@@ -161,7 +161,7 @@ static void decompress(void)
     }
     clear_table();
 
-    if (read(STDIN_FILENO, ibuf, BUFFER_SIZE - SPARE) == -1) {
+    if (read(STDIN_FILENO, ibuf, BUFFER_SIZE) == -1) {
         die("Read error");
     }
 

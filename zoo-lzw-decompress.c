@@ -41,7 +41,7 @@ static unsigned int rd_dcode(void);
 static void wr_dchar(char ch);
 static void ad_dcode(void);
 
-static unsigned int lzd_sp = 0;
+static unsigned int lzd_sp;
 static unsigned int lzd_stack[STACKSIZE + SPARE];
 
 static void die(const char *msg)
@@ -83,9 +83,6 @@ static int lzd(void)
     nbits = 9;
     max_code = 512;
     free_code = FIRST_FREE;
-    lzd_sp = 0;
-    bit_offset = 0;
-    output_offset = 0;
 
     table = calloc(1, MAXMAX * sizeof(struct tabentry) + SPARE);
     if (!table) {
@@ -101,7 +98,7 @@ static int lzd(void)
 loop:
     cur_code = rd_dcode();
     if (cur_code == Z_EOF) {
-        if (output_offset != 0) {
+        if (output_offset) {
             if (write(STDOUT_FILENO, out_buf_adr, output_offset) !=
                 output_offset) {
                 die("Write error");
@@ -131,7 +128,7 @@ loop:
 
     k = fin_char = cur_code;
     push(k);
-    while (lzd_sp != 0) {
+    while (lzd_sp) {
         wr_dchar(pop());
     }
     ad_dcode();
@@ -180,7 +177,7 @@ static unsigned int rd_dcode(void)
     ptra++;
 
     nextch = *ptra;
-    if (ofs_inbyte != 0) {
+    if (ofs_inbyte) {
         // shift nextch right by ofs_inbyte bits
         // and shift those bits right into word;
         word =

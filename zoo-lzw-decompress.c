@@ -100,7 +100,7 @@ static void stack_push(int ch)
     }
 }
 
-static unsigned int pop(void) { return stack[--nstack]; }
+static unsigned int stack_pop(void) { return stack[--nstack]; }
 
 // rd_dcode() reads a code from the input (compressed) file and returns its
 // value.
@@ -192,7 +192,7 @@ loop:
     k = fin_char = cur_code;
     stack_push(k);
     while (nstack) {
-        wr_dchar(pop());
+        wr_dchar(stack_pop());
     }
     table_add_code();
     old_code = in_code;
